@@ -34,11 +34,6 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 
 /* COL2ROW or ROW2COL */
 #define DIODE_DIRECTION COL2ROW
-	#define BACKLIGHT_PWM_ON 0
-	#define WS2812B_LED_PIN 6
-
-	#define WS2812B_LED_COUNT 1
-	#define WS2812B_LED_ON 1
      #define BATTERY_TYPE BATT_LIPO
 
 #define  STATUS_KB_LED_PIN 17  //red = 0.17
@@ -46,12 +41,6 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
         #define VCC_POLARITY_ON 0
         #define  STATUS_BLE_LED_PIN  15  //blue = 0.15
           //#define  STATUS_KB_LED_PIN 0  //no RED LED
-
-//  OLED DEFINITION
-    #define I2C_SDA_PIN 17
-    #define I2C_SCK_PIN 20
-    #define DISPLAY_U8G2_CONSTRUCTOR U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C // see https://github.com/olikraus/u8g2/wiki/u8g2setupcpp for reference
-
 
    /*     #define D3      6
         #define D2      8

@@ -17,6 +17,7 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
+#define _PINNUM(port, bit)    ((port)*32 + (bit))
 #ifndef HARDWARE_CONFIG_H
 #define HARDWARE_CONFIG_H
 #include "hardware_variants.h"
@@ -24,8 +25,8 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 /* key matrix size */
 #define MATRIX_ROWS 4
 #define MATRIX_COLS 6
-#define MATRIX_ROW_PINS { 6, 7, 8, 9 }
-#define MATRIX_COL_PINS { 3, 4, 5, 14, 16, 10 }
+#define MATRIX_ROW_PINS { _PINNUM(1,0), _PINNUM(0,11), _PINNUM(1,4), _PINNUM(1,6) } // promicro => { 6, 7, 8, 9 }
+#define MATRIX_COL_PINS { _PINNUM(0,20), _PINNUM(0,22), _PINNUM(0,24), _PINNUM(1,11), _PINNUM(0,10), _PINNUM(0,9) } // promicro => { 3, 4, 5, 14, 16, 10 }
 
 #define ARDUINO_NICE_NANO 1 // used in debug_cli.cpp to bypass 0.14 and 0.16 that are directly connected to 0.18 (reset)
 

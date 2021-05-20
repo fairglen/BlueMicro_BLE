@@ -76,7 +76,7 @@ void setupKeymap() {
  */
     uint32_t layer1[MATRIX_ROWS][MATRIX_COLS] =
         KEYMAP( \
-              KC_ESC,   PRINT_BATTERY, BLEPROFILE_1,    KC_3,    KC_4,    KC_5, \
+              KC_ESC,   PRINT_BATTERY, BLEPROFILE_1,    K_3,    KC_4,    KC_5, \
               PRINT_INFO,  OUT_AUTO,     OUT_USB,  OUT_BT,   KC_NO,   KC_NO, \
               PRINT_BLE,  KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, \
                                  KC_LALT, KC_LGUI, LAYER_1, KC_SPC \

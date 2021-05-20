@@ -17,7 +17,6 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
-#define _PINNUM(port, bit)    ((port)*32 + (bit))
 #ifndef HARDWARE_CONFIG_H
 #define HARDWARE_CONFIG_H
 #include "hardware_variants.h"
@@ -25,8 +24,8 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 /* key matrix size */
 #define MATRIX_ROWS 4
 #define MATRIX_COLS 6
-#define MATRIX_ROW_PINS { _PINNUM(1,0), _PINNUM(0,11), _PINNUM(1,4), _PINNUM(1,6) } // promicro => { 6, 7, 8, 9 }
-#define MATRIX_COL_PINS { _PINNUM(0,20), _PINNUM(0,22), _PINNUM(0,24), _PINNUM(1,11), _PINNUM(0,10), _PINNUM(0,9) } // promicro => { 3, 4, 5, 14, 16, 10 }
+#define MATRIX_ROW_PINS { 32, 11, 36, 38 } // promicro => { 6, 7, 8, 9 }
+#define MATRIX_COL_PINS { 20, 22, 24, 43, 10, 9 } // promicro => { 3, 4, 5, 14, 16, 10 }
 
 #define ARDUINO_NICE_NANO 1 // used in debug_cli.cpp to bypass 0.14 and 0.16 that are directly connected to 0.18 (reset)
 
@@ -34,32 +33,11 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 
 /* COL2ROW or ROW2COL */
 #define DIODE_DIRECTION COL2ROW
-     #define BATTERY_TYPE BATT_LIPO
+#define BATTERY_TYPE BATT_LIPO
 
-#define  STATUS_KB_LED_PIN 17  //red = 0.17
-        #define VCC_PIN 13
-        #define VCC_POLARITY_ON 0
-        #define  STATUS_BLE_LED_PIN  15  //blue = 0.15
-          //#define  STATUS_KB_LED_PIN 0  //no RED LED
+#define VCC_PIN 13
+#define VCC_POLARITY_ON 0
+#define  STATUS_BLE_LED_PIN  15  //blue = 0.15
+#define  STATUS_KB_LED_PIN 0  //no RED LED
 
-   /*     #define D3      6
-        #define D2      8
-        #define D1      17
-        #define D0      20
-        #define D4      22
-        #define C6      24
-        #define D7      32 //1.00  = 32+0
-        #define E6      11
-        #define B4      36 //1.04  = 32+4
-        #define B5      38 //1.06  = 32+6
-
-        #define F4      31
-        #define F5      29
-        #define F6      2
-        #define F7      47 //1.15  = 32+15
-        #define B1      45 //1.13  = 32+13
-        #define B3      43 //1.11 = 32+11
-        #define B2      10
-        #define B6      9
-        #define NC      33 //1.01 = 32+1 // NC is for not connected....*/
 #endif /* HARDWARE_CONFIG_H */

@@ -77,7 +77,6 @@ int16_t thumbstick_get_axis_mouse_move(int16_t pin, bool flip_axis)
     {
         axis_distance = thumbstick_get_axis_distance(pin);
     }
-    blehid.begin();
     return thumbstick_get_mouse_speed(axis_distance);
 }
 

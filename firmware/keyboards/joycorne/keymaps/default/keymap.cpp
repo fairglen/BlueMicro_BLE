@@ -34,6 +34,10 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 #define THUMBSTICK_RANGE_CENTER (THUMBSTICK_RANGE_STOP - THUMBSTICK_RANGE_START + 1) / 2
 #define THUMBSTICK_RANGE_MOVEMENT (THUMBSTICK_RANGE_CENTER - THUMBSTICK_DEAD_ZONE)
 
+#if BLE_HID == 1                                                                    // THIS IS USUALLY ON THE MASTER/CENTRAL BOARD
+  BLEHidAdafruit blehid;                                                            // HID Service
+#endif
+
 // Axis-level wrapper to read raw value
 uint16_t thumbstick_get_axis_distance(uint16_t pin)
 {
@@ -76,6 +80,7 @@ int16_t thumbstick_get_axis_mouse_move(int16_t pin, bool flip_axis)
     {
         axis_distance = thumbstick_get_axis_distance(pin);
     }
+    blehid.begin();
     return thumbstick_get_mouse_speed(axis_distance);
 }
 

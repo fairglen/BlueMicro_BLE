@@ -124,8 +124,8 @@ void setupKeymap() {
 
 void process_keyboard_function(uint16_t keycode)
 {
-        Serial.println(keycode);
-        addStringToQueue("hello");
+    Serial.println(keycode);
+    addStringToQueue("hello");
 
 }
 #endif  // left

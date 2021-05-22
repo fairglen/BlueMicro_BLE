@@ -17,6 +17,8 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 */
 #include "keymap.h"
 
+#define THUMBSTICK_X_PIN  29
+#define THUMBSTICK_Y_PIN  2
 
 #if KEYBOARD_SIDE == SINGLE
 std::array<std::array<Key, MATRIX_COLS>, MATRIX_ROWS> matrix =
@@ -114,8 +116,18 @@ void setupKeymap() {
 
     // if you want to add Tap/Hold or Tap/Doubletap activations, then you add them below.
 
+    Serial.begin(115200);
+    pinMode(THUMBSTICK_X_PIN, INPUT);
+    pinMode(THUMBSTICK_Y_PIN, INPUT);
 }
 
+
+void process_keyboard_function(uint16_t keycode)
+{
+        Serial.println(keycode);
+        addStringToQueue("hello");
+
+}
 #endif  // left
 
 

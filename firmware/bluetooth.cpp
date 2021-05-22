@@ -11,9 +11,9 @@ Redistribution and use in source and binary forms, with or without modification,
 
 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR 
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
@@ -29,29 +29,33 @@ extern Battery batterymonitor;
 
  #if BLE_HID == 1
  uint16_t hid_conn_hdl;
- #endif 
- 
-extern BLEBas blebas; 
+ #endif
+
+extern BLEBas blebas;
 StatePayload  statedata;
 
 #if BLE_PERIPHERAL == 1                                                             // PERIPHERAL IS THE SLAVE BOARD
   Payload Linkdata;
-  BLEService KBLinkService = BLEService(UUID128_SVC_KEYBOARD_LINK);                 // Keyboard Link Service - Slave/Server Side                 
+  BLEService KBLinkService = BLEService(UUID128_SVC_KEYBOARD_LINK);                 // Keyboard Link Service - Slave/Server Side
   BLECharacteristic KBLinkChar_Layers        = BLECharacteristic(UUID128_CHR_KEYBOARD_LAYERS);
-  BLECharacteristic KBLinkChar_Layer_Request = BLECharacteristic(UUID128_CHR_KEYBOARD_LAYER_REQUEST);      
-  BLECharacteristic KBLinkChar_Buffer        = BLECharacteristic(UUID128_CHR_KEYBOARD_BUFFER); 
+  BLECharacteristic KBLinkChar_Layer_Request = BLECharacteristic(UUID128_CHR_KEYBOARD_LAYER_REQUEST);
+  BLECharacteristic KBLinkChar_Buffer        = BLECharacteristic(UUID128_CHR_KEYBOARD_BUFFER);
 #endif
 
 #if BLE_HID == 1                                                                    // THIS IS USUALLY ON THE MASTER/CENTRAL BOARD
   BLEHidAdafruit blehid;                                                            // HID Service
+  BLEHidAdafruit bt_getBLEHid()
+  {
+    return blehid;
+  }
 #endif
 
 // ToDo: provision for multiple master/slave links
 #if BLE_CENTRAL == 1                                                                // CENTRAL IS THE MASTER BOARD
-  BLEClientService KBLinkClientService = BLEClientService(UUID128_SVC_KEYBOARD_LINK);     // Keyboard Link Service Client - Master/Client Side  
+  BLEClientService KBLinkClientService = BLEClientService(UUID128_SVC_KEYBOARD_LINK);     // Keyboard Link Service Client - Master/Client Side
   BLEClientCharacteristic KBLinkClientChar_Layers        = BLEClientCharacteristic(UUID128_CHR_KEYBOARD_LAYERS);
   BLEClientCharacteristic KBLinkClientChar_Layer_Request = BLEClientCharacteristic(UUID128_CHR_KEYBOARD_LAYER_REQUEST);
-  BLEClientCharacteristic KBLinkClientChar_Buffer        = BLEClientCharacteristic(UUID128_CHR_KEYBOARD_BUFFER); 
+  BLEClientCharacteristic KBLinkClientChar_Buffer        = BLEClientCharacteristic(UUID128_CHR_KEYBOARD_BUFFER);
 #endif
 /**************************************************************************************************************************/
 void bt_setup(uint8_t BLEProfile)
@@ -63,13 +67,13 @@ ble_gap_conn_params_t _ppcp;
     .slave_latency     = 5,
     .conn_sup_timeout  = 2000 / 10 // in 10ms unit
   });
-  
+
   //Bluefruit.configPrphBandwidth(BANDWIDTH_MAX); // OK for nrf52840
 //  Bluefruit.configPrphBandwidth(BANDWIDTH_HIGH);
  // Bluefruit.configCentralBandwidth(BANDWIDTH_HIGH);
   Bluefruit.begin(PERIPHERAL_COUNT,CENTRAL_COUNT);                            // Defined in firmware_config.h
 
-  
+
   Bluefruit.autoConnLed(false);                                               // make sure the BlueFruit connection LED is not toggled.
   Bluefruit.setTxPower(DEVICE_POWER);                                         // Defined in bluetooth_config.h
   Bluefruit.setName(DEVICE_NAME);                                             // Defined in keyboard_config.h
@@ -81,13 +85,13 @@ ble_gap_conn_params_t _ppcp;
   //https://devzone.nordicsemi.com/nordic/power/w/opp/2/online-power-profiler-for-ble
  // Bluefruit.Periph.setConnInterval(6, 12); // 7.5 - 15 ms
  // Bluefruit.Periph.setConnSlaveLatency(10); // TODO: add this when 0.22.0 gets released!  This will reduce power consumption significantly.
- 
+
 //sd_ble_gap_ppcp_get(&_ppcp);
 //_ppcp.slave_latency = 30;
 sd_ble_gap_ppcp_set(&_ppcp);
 
   Bluefruit.Periph.setConnectCallback(prph_connect_callback);
-  Bluefruit.Periph.setDisconnectCallback(prph_disconnect_callback);  
+  Bluefruit.Periph.setDisconnectCallback(prph_disconnect_callback);
 
   // Set MAC address based on active BLE profile
   if (BLEProfile > 0)
@@ -103,12 +107,12 @@ sd_ble_gap_ppcp_set(&_ppcp);
   bledis.setModel(DEVICE_MODEL);                                              // Defined in keyboard_config.h
   bledis.begin();
 
- 
+
   // Configure and Start Battery Service
   blebas.begin();
   blebas.write(100); // put the battery level at 100% - until it is updated by the battery monitoring loop.
   batterymonitor.readVBAT(); // Get a single ADC sample and throw it away
-  
+
   statedata.command =0;
   statedata.layer =0;
   statedata.timesync=0;
@@ -130,7 +134,7 @@ sd_ble_gap_ppcp_set(&_ppcp);
 
   // Configure Keyboard Link Service
   KBLinkService.begin();
-  
+
   KBLinkChar_Layers.setProperties(CHR_PROPS_NOTIFY+ CHR_PROPS_READ);
   KBLinkChar_Layers.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
   KBLinkChar_Layers.setMaxLen(sizeof(statedata));
@@ -148,7 +152,7 @@ sd_ble_gap_ppcp_set(&_ppcp);
   KBLinkChar_Layer_Request.setWriteCallback(layer_request_callback);
   KBLinkChar_Layer_Request.begin();
   KBLinkChar_Layer_Request.write(&statedata, sizeof(statedata));  // initialize with empty buffer
-    
+
   KBLinkChar_Buffer.setProperties(CHR_PROPS_NOTIFY+ CHR_PROPS_READ);
   KBLinkChar_Buffer.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
   KBLinkChar_Buffer.setMaxLen(sizeof(Linkdata));
@@ -159,15 +163,15 @@ sd_ble_gap_ppcp_set(&_ppcp);
   KBLinkChar_Buffer.write(&Linkdata, sizeof(Linkdata));  // initialize with empty buffer
 
  #endif
- 
+
     /* Start BLE HID
    * Note: Apple requires BLE device must have min connection interval >= 20m
    * ( The smaller the connection interval the faster we could send data).
-   * However for HID and MIDI device, Apple could accept min connection interval 
+   * However for HID and MIDI device, Apple could accept min connection interval
    * up to 11.25 ms. Therefore BLEHidAdafruit::begin() will try to set the min and max
    * connection interval to 11.25  ms and 15 ms respectively for best performance.
    */
-   
+
 #if BLE_HID == 1
   blehid.begin();
   // Set callback for set LED from central
@@ -176,7 +180,7 @@ sd_ble_gap_ppcp_set(&_ppcp);
 
   /* Set connection interval (min, max) to your perferred value.
    * Note: It is already set by BLEHidAdafruit::begin() to 11.25ms - 15ms
-   * min = 9*1.25=11.25 ms, max = 12*1.25= 15 ms 
+   * min = 9*1.25=11.25 ms, max = 12*1.25= 15 ms
    */
 
  #if BLE_CENTRAL == 1                                   // CENTRAL IS THE MASTER BOARD
@@ -186,7 +190,7 @@ sd_ble_gap_ppcp_set(&_ppcp);
   KBLinkClientChar_Layers.setNotifyCallback(notify_callback);
   KBLinkClientChar_Buffer.begin();
   KBLinkClientChar_Buffer.setNotifyCallback(notify_callback);
-  KBLinkClientChar_Layer_Request.begin(); 
+  KBLinkClientChar_Layer_Request.begin();
 
   Bluefruit.Scanner.setRxCallback(scan_callback);
   Bluefruit.Scanner.restartOnDisconnect(true);
@@ -213,7 +217,7 @@ ble_gap_addr_t bt_getMACAddr(void)
 //
 /**************************************************************************************************************************/
 void bt_startAdv(void)
-{  
+{
   // Advertising packet
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addTxPower();
@@ -222,37 +226,37 @@ void bt_startAdv(void)
   Bluefruit.Advertising.addAppearance(BLE_APPEARANCE_HID_KEYBOARD);
   Bluefruit.Advertising.addService(blehid);  // Include BLE HID service
   #endif
-  
+
   #if BLE_PERIPHERAL ==1
    Bluefruit.Advertising.addUuid(UUID128_SVC_KEYBOARD_LINK);
    Bluefruit.Advertising.addUuid(UUID128_CHR_KEYBOARD_LAYERS);
    Bluefruit.Advertising.addUuid(UUID128_CHR_KEYBOARD_LAYER_REQUEST);
-   Bluefruit.Advertising.addUuid(UUID128_CHR_KEYBOARD_BUFFER); 
+   Bluefruit.Advertising.addUuid(UUID128_CHR_KEYBOARD_BUFFER);
    Bluefruit.Advertising.addService(KBLinkService);  /// Advertizing Keyboard Link Service
   #endif
 
-  // There is no other service for Central 
+  // There is no other service for Central
   // ToDo: Consider Configuration Service... Save config to board, reset to default values, go to DFU, etc...
-  
+
   // There is probably not enough room for the dev name in the advertising packet. Putting it in the ScanResponse Packet
   //Bluefruit.ScanResponse.addName();
   Bluefruit.Advertising.addName();
-  
+
   /* Start Advertising
    * - Enable auto advertising if disconnected
    * - Interval:  fast mode = 20 ms, slow mode = 152.5 ms
    * - Timeout for fast mode is 30 seconds
    * - Start(timeout) with timeout = 0 will advertise forever (until connected)
-   * 
+   *
    * For recommended advertising interval
-   * https://developer.apple.com/library/content/qa/qa1931/_index.html   
+   * https://developer.apple.com/library/content/qa/qa1931/_index.html
    */
-   
+
   Bluefruit.Advertising.restartOnDisconnect(true);
   Bluefruit.Advertising.setInterval(32, 244);    // in unit of 0.625 ms
   Bluefruit.Advertising.setFastTimeout(30);      // number of seconds in fast mode
   Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds
-  
+
   Bluefruit.Advertising.setSlowCallback(advertizing_slow_callback);
   Bluefruit.Advertising.setStopCallback(advertizing_stop_callback);
 }
@@ -297,19 +301,19 @@ void rssi_changed_callback(uint16_t conn_hdl, int8_t rssi)
   {
     keyboardstate.rssi_cccd = rssi;
     keyboardstate.rssi_cccd_updated = true;
-  }  
-     
+  }
+
 }
 
 void updateBLEStatus(void)
 {
   keyboardstate.statusble = 0;
   if (Bluefruit.Advertising.isRunning())
-  { 
+  {
     keyboardstate.statusble = keyboardstate.statusble | (4); // bitwise OR
   }
     if (Bluefruit.connected()>0)
-  { 
+  {
     keyboardstate.statusble = keyboardstate.statusble | (32); // bitwise OR
   }
 
@@ -323,7 +327,7 @@ void updateBLEStatus(void)
 void notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
 {
 
-  Payload remotedata; 
+  Payload remotedata;
 
   LOG_LV1("CB NOT","notify_callback: want %i got %i [0] %i [1] %i [2] %i [3] %i [4] %i [5] %i [6] %i" , sizeof(remotedata),len, data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
   if (len>0)  // check if there really is data...
@@ -341,9 +345,9 @@ void notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
           KeyScanner::updateRemoteReport(remotedata.modifier,remotedata.keycode[0],remotedata.keycode[1],remotedata.keycode[2], remotedata.keycode[3],remotedata.keycode[4], remotedata.keycode[5]);
           KeyScanner::updateRemoteLayer(remotedata.layer);
           KeyScanner::remotespecialkeycode = remotedata.specialkeycode;
-        }      
+        }
       }
-      
+
   }
 }
 #endif
@@ -351,7 +355,7 @@ void notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
 // This callback is called when a Notification subscription event occurs (This occurs on the server)
 /**************************************************************************************************************************/
  #if BLE_PERIPHERAL == 1
-void cccd_callback(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_value)    
+void cccd_callback(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_value)
 {
 // this is called on the slave board...
   char peer_name[32] = { 0 };
@@ -362,11 +366,11 @@ void cccd_callback(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_valu
   strcpy (keyboardstate.peer_name_cccd,peer_name);
   keyboardstate.conn_handle_cccd = conn_hdl;
     LOG_LV1("CBCCCD","notify_callback: %i " ,cccd_value);
-    
+
     // Check the characteristic this CCCD update is associated with in case
     // this handler is used for multiple CCCD records.
     if (chr->uuid == KBLinkChar_Layers.uuid) {
-        if (chr->notifyEnabled()) {              
+        if (chr->notifyEnabled()) {
             LOG_LV1("CBCCCD","Layers 'Notify' enabled");
         } else {
             LOG_LV1("CBCCCD","Layers 'Notify' disabled");
@@ -399,7 +403,7 @@ LOG_LV1("CB_CHR","layer_request_callback: len %i offset %i  data %i" ,len, data[
       {
         statedata=*(StatePayload*) data; // update state
         KeyScanner::updateRemoteLayer(statedata.layer);
-      }  
+      }
 }
 #endif
 
@@ -474,7 +478,7 @@ void scan_callback(ble_gap_evt_adv_report_t* report)
   {
     LOG_LV1("KBLINK","KBLink service detected. Connecting ... ");
     Bluefruit.Central.connect(report);
-    } 
+    }
 }
 
 
@@ -496,22 +500,22 @@ keyboardstate.conn_handle_cent = conn_handle;
   if (KBLinkClientService.discover(conn_handle )) // validating that KBLink service is available to this connection
   {
     if (KBLinkClientChar_Layers.discover()) {
-          KBLinkClientChar_Layers.enableNotify();      
+          KBLinkClientChar_Layers.enableNotify();
       }
     if (KBLinkClientChar_Buffer.discover()) {
-          KBLinkClientChar_Buffer.enableNotify();      
+          KBLinkClientChar_Buffer.enableNotify();
       }
 
       if (KBLinkClientChar_Layer_Request.discover()) {
-          LOG_LV1("CENTRL","Connected and KBLinkClientChar_Layer_Request.discover() successful");     
+          LOG_LV1("CENTRL","Connected and KBLinkClientChar_Layer_Request.discover() successful");
       }
   }
-  else 
+  else
   {
     LOG_LV1("CENTRL","No KBLink Service on this connection"  );
     // disconect since we couldn't find KBLink service
     Bluefruit.disconnect(conn_handle);
-  } 
+  }
   keyboardstate.statusble = keyboardstate.statusble | (16); // bitwise OR
 }
 /**************************************************************************************************************************/
@@ -525,7 +529,7 @@ void cent_disconnect_callback(uint16_t conn_handle, uint8_t reason)
   // if the half disconnects, we need to make sure that the received buffer is set to empty.
             KeyScanner::updateRemoteLayer(0);  // Layer is only a single uint8
            KeyScanner::updateRemoteReport(0,0,0, 0,0, 0, 0);
-           keyboardstate.statusble = keyboardstate.statusble & (~16); // bitwise AND NOT  
+           keyboardstate.statusble = keyboardstate.statusble & (~16); // bitwise AND NOT
 }
 #endif
 
@@ -568,7 +572,7 @@ void bt_disconnect()
 
 /**************************************************************************************************************************/
 void sendlayer(uint8_t layer)
-{     
+{
         #if BLE_CENTRAL ==1
         LOG_LV1("CENTRAL","Sending Layer %i  %i" ,millis(),layer );
         if (KBLinkClientChar_Layer_Request.discovered()) {
@@ -579,23 +583,23 @@ void sendlayer(uint8_t layer)
         {
           LOG_LV1("CENTRAL","Sending Layer failed KBLinkClientChar_Layer_Request.discover() not true ");
         }
-        #endif 
+        #endif
 }
 /**************************************************************************************************************************/
 void bt_sendKeys(HIDKeyboard currentReport)
 {
 
-      #if BLE_HID == 1  
+      #if BLE_HID == 1
         uint8_t keycode[6];
         uint8_t mods = 0;
         mods = currentReport.modifier;                                                 // modifiers
-        keycode[0] = currentReport.keycode[0];                                           // Buffer 
-        keycode[1] = currentReport.keycode[1];                                           // Buffer 
-        keycode[2] = currentReport.keycode[2];                                           // Buffer 
-        keycode[3] = currentReport.keycode[3];                                           // Buffer 
-        keycode[4] = currentReport.keycode[4];                                           // Buffer 
-        keycode[5] = currentReport.keycode[5];                                           // Buffer 
-        blehid.keyboardReport(hid_conn_hdl,mods,  keycode); 
+        keycode[0] = currentReport.keycode[0];                                           // Buffer
+        keycode[1] = currentReport.keycode[1];                                           // Buffer
+        keycode[2] = currentReport.keycode[2];                                           // Buffer
+        keycode[3] = currentReport.keycode[3];                                           // Buffer
+        keycode[4] = currentReport.keycode[4];                                           // Buffer
+        keycode[5] = currentReport.keycode[5];                                           // Buffer
+        blehid.keyboardReport(hid_conn_hdl,mods,  keycode);
         LOG_LV2("HID","Sending blehid.keyboardReport " );
     #endif
     #if BLE_PERIPHERAL ==1    // PERIPHERAL IS THE SLAVE BOARD
@@ -612,11 +616,11 @@ void bt_sendKeys(HIDKeyboard currentReport)
           Linkdata.specialkeycode = 0;
           Linkdata.batterylevel = batterymonitor.vbat_per;
           LOG_LV1("KB-P2C"," KBLinkChar_Buffer.notify sendKeys sending %i [1] %i",sizeof(Linkdata),Linkdata.keycode[0]);
-          KBLinkChar_Buffer.notify(&Linkdata, sizeof(Linkdata));    
+          KBLinkChar_Buffer.notify(&Linkdata, sizeof(Linkdata));
     #endif
     #if BLE_CENTRAL ==1      // CENTRAL IS THE MASTER BOARD
          ; // Don't send keys to slaves
-    #endif 
+    #endif
 
 }
 
@@ -629,7 +633,7 @@ void bt_sendMouseKey(uint16_t keycode)
   static uint8_t movestep = MOVE_STEP;
 
   #if BLE_HID == 1
-  switch (keycode) 
+  switch (keycode)
   {
     case KC_MS_OFF:   blehid.mouseButtonRelease(hid_conn_hdl); break;
     case KC_MS_UP:    blehid.mouseMove(hid_conn_hdl, 0, -movestep); break;
@@ -667,11 +671,11 @@ void bt_sendMouseKey(uint16_t keycode)
           Linkdata.specialkeycode = keycode;
           Linkdata.batterylevel = batterymonitor.vbat_per;
           LOG_LV1("KB-P2C"," KBLinkChar_Buffer.notify sendMouseKey");
-          KBLinkChar_Buffer.notify(&Linkdata, sizeof(Linkdata));    
+          KBLinkChar_Buffer.notify(&Linkdata, sizeof(Linkdata));
     #endif
     #if BLE_CENTRAL ==1      // CENTRAL IS THE MASTER BOARD
          ; // Don't send keys to slaves
-    #endif 
+    #endif
 }
 /**************************************************************************************************************************/
 void bt_sendMediaKey(uint16_t keycode)
@@ -680,7 +684,7 @@ void bt_sendMediaKey(uint16_t keycode)
     blehid.consumerKeyPress(hid_conn_hdl, hid_GetMediaUsageCode(keycode));
     delay(HIDREPORTINGINTERVAL);
     blehid.consumerKeyRelease();// TODO: do I need this here???
-  #endif 
+  #endif
         #if BLE_PERIPHERAL ==1    // PERIPHERAL IS THE SLAVE BOARD
           Linkdata.keycode[0] = 0;  // initialize the slave to master link data...
           Linkdata.keycode[1] = 0;
@@ -695,10 +699,10 @@ void bt_sendMediaKey(uint16_t keycode)
           Linkdata.specialkeycode = keycode;
           Linkdata.batterylevel = batterymonitor.vbat_per;
           LOG_LV1("KB-P2C"," KBLinkChar_Buffer.notify sendMediaKey");
-          KBLinkChar_Buffer.notify(&Linkdata, sizeof(Linkdata));    
+          KBLinkChar_Buffer.notify(&Linkdata, sizeof(Linkdata));
     #endif
     #if BLE_CENTRAL ==1      // CENTRAL IS THE MASTER BOARD
          ; // Don't send keys to slaves
-    #endif 
+    #endif
 }
 /**************************************************************************************************************************/

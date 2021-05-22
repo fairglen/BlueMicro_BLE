@@ -16,6 +16,7 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 
 */
 #include "keymap.h"
+#include "bluetooth.h"
 
 #if KEYBOARD_SIDE == LEFT
 #define THUMBSTICK_READ_INTERVAL_MS 50
@@ -33,10 +34,6 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 #define THUMBSTICK_RANGE_STOP 1023
 #define THUMBSTICK_RANGE_CENTER (THUMBSTICK_RANGE_STOP - THUMBSTICK_RANGE_START + 1) / 2
 #define THUMBSTICK_RANGE_MOVEMENT (THUMBSTICK_RANGE_CENTER - THUMBSTICK_DEAD_ZONE)
-
-#if BLE_HID == 1                                                                    // THIS IS USUALLY ON THE MASTER/CENTRAL BOARD
-  BLEHidAdafruit blehid;                                                            // HID Service
-#endif
 
 // Axis-level wrapper to read raw value
 uint16_t thumbstick_get_axis_distance(uint16_t pin)
@@ -96,7 +93,7 @@ extern "C"
         x_move = thumbstick_get_axis_mouse_move(THUMBSTICK_X_PIN, THUMBSTICK_X_FLIP);
         y_move = thumbstick_get_axis_mouse_move(THUMBSTICK_Y_PIN, THUMBSTICK_Y_FLIP);
 
-        blehid.mouseMove(x_move, y_move);
+        bt_getBLEHid().mouseMove(x_move, y_move);
     }
 } // extern C
 /* Qwerty

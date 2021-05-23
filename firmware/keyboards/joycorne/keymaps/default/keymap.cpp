@@ -16,7 +16,6 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 
 */
 #include "keymap.h"
-#include "bluetooth.h"
 
 #if KEYBOARD_SIDE == LEFT
 #define THUMBSTICK_READ_INTERVAL_MS 50
@@ -92,7 +91,18 @@ extern "C"
         x_move = thumbstick_get_axis_mouse_move(THUMBSTICK_X_PIN, THUMBSTICK_X_FLIP);
         y_move = thumbstick_get_axis_mouse_move(THUMBSTICK_Y_PIN, THUMBSTICK_Y_FLIP);
 
-        bt_getBLEHid().mouseMove(x_move, y_move);
+        if ( x_move > 0 ){
+            addKeycodeToQueue(KC_RIGHT);
+        }
+        if ( x_move <  0 ){
+            addKeycodeToQueue(KC_LEFT);
+        }
+        if ( y_move <  0 ){
+            addKeycodeToQueue(KC_DOWN);
+        }
+        if ( y_move >  0 ){
+            addKeycodeToQueue(KC_UP);
+        }
     }
 } // extern C
 /* Qwerty

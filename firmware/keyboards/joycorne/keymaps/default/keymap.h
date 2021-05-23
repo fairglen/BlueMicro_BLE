@@ -24,7 +24,6 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 #include "Key.h"
 #include <array>
 #include "KeyScanner.h"
-#include "RotaryEncoder.h"
 
 #ifndef KEYMAP_H
 #define KEYMAP_H
@@ -43,8 +42,6 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 
 void setupKeymap();
 extern std::array<std::array<Key, MATRIX_COLS>, MATRIX_ROWS> matrix;
-
-void process_keyboard_function(uint16_t keycode);
-void addStringToQueue(const char* str);
+extern void addKeycodeToQueue(const uint16_t keycode);
 
 #endif /* KEYMAP_H */

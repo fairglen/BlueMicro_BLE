@@ -18,7 +18,7 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR P
 #include "keymap.h"
 
 #if KEYBOARD_SIDE == LEFT
-#define THUMBSTICK_READ_INTERVAL_MS 50
+#define THUMBSTICK_READ_INTERVAL_MS 1
 #define THUMBSTICK_X_PIN 31
 #define THUMBSTICK_Y_PIN 2
 
@@ -97,10 +97,10 @@ extern "C"
         if ( x_move <  0 ){
             addKeycodeToQueue(KC_LEFT);
         }
-        if ( y_move <  0 ){
+        if ( y_move > 0 ){
             addKeycodeToQueue(KC_DOWN);
         }
-        if ( y_move >  0 ){
+        if ( y_move <  0 ){
             addKeycodeToQueue(KC_UP);
         }
     }

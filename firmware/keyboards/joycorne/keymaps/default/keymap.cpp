@@ -80,31 +80,31 @@ int16_t thumbstick_get_axis_mouse_move(int16_t pin, bool flip_axis)
 }
 
 // Interval between systick event
-extern "C"
-{
+// extern "C"
+// {
 
-    void SysTick_Handler(void)
-    {
-        int16_t x_move;
-        int16_t y_move;
+//     void SysTick_Handler(void)
+//     {
+//         int16_t x_move;
+//         int16_t y_move;
 
-        x_move = thumbstick_get_axis_mouse_move(THUMBSTICK_X_PIN, THUMBSTICK_X_FLIP);
-        y_move = thumbstick_get_axis_mouse_move(THUMBSTICK_Y_PIN, THUMBSTICK_Y_FLIP);
+//         x_move = thumbstick_get_axis_mouse_move(THUMBSTICK_X_PIN, THUMBSTICK_X_FLIP);
+//         y_move = thumbstick_get_axis_mouse_move(THUMBSTICK_Y_PIN, THUMBSTICK_Y_FLIP);
 
-        if ( x_move > 0 ){
-            addKeycodeToQueue(KC_RIGHT);
-        }
-        if ( x_move <  0 ){
-            addKeycodeToQueue(KC_LEFT);
-        }
-        if ( y_move > 0 ){
-            addKeycodeToQueue(KC_DOWN);
-        }
-        if ( y_move <  0 ){
-            addKeycodeToQueue(KC_UP);
-        }
-    }
-} // extern C
+//         if ( x_move > 0 ){
+//             addKeycodeToQueue(KC_RIGHT);
+//         }
+//         if ( x_move <  0 ){
+//             addKeycodeToQueue(KC_LEFT);
+//         }
+//         if ( y_move > 0 ){
+//             addKeycodeToQueue(KC_DOWN);
+//         }
+//         if ( y_move <  0 ){
+//             addKeycodeToQueue(KC_UP);
+//         }
+//     }
+// } // extern C
 /* Qwerty
  * ,-----------------------------------------.
  * | Tab  |   Q  |   W     |   E  |   R  |   T  |
@@ -184,7 +184,7 @@ void setupKeymap()
    * --> our Tmax = 0xFFFFFF/64000 ~ 262 ms
    */
 
-    SysTick_Config( (F_CPU/1000)*THUMBSTICK_READ_INTERVAL_MS);
+    // SysTick_Config( (F_CPU/1000)*THUMBSTICK_READ_INTERVAL_MS);
 }
 #endif // left
 
